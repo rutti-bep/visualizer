@@ -63,8 +63,10 @@ class AudioCatcher{
     {
         // 入力デバイスを設定
         
-        var inputDeviceId = AudioDeviceID()
-        var address =  AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultInputDevice, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMaster)
+        var inputDeviceId = AudioDeviceID(0)
+        var address =  AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
+                                                  mScope: kAudioObjectPropertyScopeGlobal,
+                                                  mElement: kAudioObjectPropertyElementMaster)
         var size = UInt32(MemoryLayout<AudioDeviceID>.size)
         
         var err = AudioObjectGetPropertyData(UInt32(kAudioObjectSystemObject), &address, 0, nil, &size, &inputDeviceId)

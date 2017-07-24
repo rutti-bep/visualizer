@@ -20,6 +20,7 @@ final class Graph: NSView{
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
+        self.reduce(4);
         
         NSColor.init(red: 0.972549019607843, green: 0.709803921568627, blue: 0.031372549019608, alpha: 1).set();
         let path = NSBezierPath()
@@ -28,8 +29,8 @@ final class Graph: NSView{
         let widthSpace = self.frame.width/CGFloat(array.count);
         for i in 0..<array.count {
             //Swift.print(abs(array[i]))
-            let absArray = array[i] >= 0 ? array[i] : abs(array[i]+1);
-            let height = CGFloat(absArray)/127.0*self.frame.height;
+            //let absArray = array[i] >= 0 ? array[i] : abs(array[i]+1);
+            let height = CGFloat(array[i])/127.0*self.frame.height;
             let width = widthSpace*CGFloat(i+1);
             let point = NSPoint(x:width,y:height)
             path.line(to: point)
@@ -39,4 +40,22 @@ final class Graph: NSView{
         path.stroke()
     }
     
+    private func reduce(_ changeLimit:Int?=1){
+        var change = 0;
+        var reserve:Int8 = 0;
+        var newArray = [Int8]()
+        for i in 0..<array.count/3 {
+            let absArray = array[i] >= 0 ? array[i] : abs(array[i]+1);
+            if(reserve < absArray){
+                reserve = absArray
+            }
+            change += 1;
+            if(change >= changeLimit!){
+                newArray.append(reserve)
+                reserve = 0;
+                change = 0;
+            }
+        }
+        array = newArray;
+    }
 }
