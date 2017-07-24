@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		596AD4AB1F1A2D2B00767757 /* audioCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596AD4AA1F1A2D2B00767757 /* audioCatch.swift */; };
 		596AD4AE1F1A2EEE00767757 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596AD4AD1F1A2EEE00767757 /* CoreAudio.framework */; };
-		596AD4B01F1A38CF00767757 /* audioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596AD4AF1F1A38CF00767757 /* audioInput.swift */; };
 		596AD4B21F1B049500767757 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596AD4B11F1B049500767757 /* AVFoundation.framework */; };
 		596AD4B41F1B06BC00767757 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596AD4B31F1B06BC00767757 /* Accelerate.framework */; };
 		596AD4B61F1B551200767757 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596AD4B51F1B551200767757 /* AudioUnit.framework */; };
@@ -24,7 +23,6 @@
 /* Begin PBXFileReference section */
 		596AD4AA1F1A2D2B00767757 /* audioCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = audioCatch.swift; sourceTree = "<group>"; };
 		596AD4AD1F1A2EEE00767757 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		596AD4AF1F1A38CF00767757 /* audioInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = audioInput.swift; sourceTree = "<group>"; };
 		596AD4B11F1B049500767757 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		596AD4B31F1B06BC00767757 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		596AD4B51F1B551200767757 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -88,7 +86,6 @@
 			children = (
 				59D806E51EFBEEA8006828E6 /* AppDelegate.swift */,
 				59D806E71EFBEEA8006828E6 /* ViewController.swift */,
-				596AD4AF1F1A38CF00767757 /* audioInput.swift */,
 				596AD4AA1F1A2D2B00767757 /* audioCatch.swift */,
 				599663C81F2614FD000917CE /* graphDraw.swift */,
 				59D806E91EFBEEA8006828E6 /* Assets.xcassets */,
@@ -172,7 +169,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59D806E81EFBEEA8006828E6 /* ViewController.swift in Sources */,
-				596AD4B01F1A38CF00767757 /* audioInput.swift in Sources */,
 				59D806E61EFBEEA8006828E6 /* AppDelegate.swift in Sources */,
 				599663C91F2614FD000917CE /* graphDraw.swift in Sources */,
 				596AD4AB1F1A2D2B00767757 /* audioCatch.swift in Sources */,
