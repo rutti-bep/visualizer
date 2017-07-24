@@ -25,18 +25,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
-        
-        window = NSWindow(contentRect: NSRect(x:NSScreen.main()!.frame.midX,y:NSScreen.main()!.frame.midY,width:1000,height:800), styleMask: [.closable,.titled], backing: NSBackingStoreType.buffered, defer:false)
+        let screen:NSScreen = NSScreen.main()!
+        window = NSWindow(contentRect:screen.frame, styleMask: [], backing: NSBackingStoreType.buffered, defer:false)
+       // window!.setContentSize(NSSize(width:screen.frame.width,height:screen.frame.height/2))
         window!.acceptsMouseMovedEvents = true
-        window!.title = "vizualizer"
+       // window!.title = "vizualizer"
         window!.center()
         window!.isMovableByWindowBackground = true
+        window!.backgroundColor = NSColor.clear
+        //window!.level = Int(CGWindowLevelForKey(.desktopWindow))
+        window!.collectionBehavior = NSWindowCollectionBehavior.canJoinAllSpaces
         window!.makeKeyAndOrderFront(nil)
 
         graphView = Graph.sharedInstance;
         graphView!.frame = NSRect(x:0,y:0,width:window!.frame.width,height:window!.frame.height-20);
         graphView!.wantsLayer = true
-        graphView!.layer?.backgroundColor = NSColor.black.cgColor;
+        graphView!.layer?.backgroundColor = NSColor.clear.cgColor;
         window!.contentView?.addSubview(graphView!);
        
         graphView!.array = [127,30,-59,-127]

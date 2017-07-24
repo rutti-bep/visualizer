@@ -317,7 +317,7 @@ func getInputDevices() throws -> [AudioDeviceID] {
         
         // If there are channels, it's an input device
         if channelCount > 0 {
-            Swift.print("Found input device '\(name)' with \(channelCount) channels")
+            Swift.print("Found input device '\(name)' with \(channelCount) channels id:\(id)")
             inputDevices.append(id)
         }
     }

@@ -21,7 +21,7 @@ final class Graph: NSView{
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         
-        NSColor.cyan.set();
+        NSColor.init(red: 0.972549019607843, green: 0.709803921568627, blue: 0.031372549019608, alpha: 1).set();
         let path = NSBezierPath()
         path.move(to: NSPoint(x:self.frame.minX,y:self.frame.minY))
         
