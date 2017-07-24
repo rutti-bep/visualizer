@@ -15,10 +15,11 @@ import AudioToolbox
 let kOutputBus: UInt32 = 0;
 let kInputBus: UInt32 = 1;
 
+let graphView = Graph.sharedInstance;
+
 class AudioCatcher{
     var audioUnit:AudioUnit? = nil;
     static let sharedInstance = AudioCatcher();
-    var soundArray = [UInt16]();
     
     private func setUpAudioHAL() -> OSStatus{
         var desc = AudioComponentDescription();
@@ -207,10 +208,10 @@ func renderCallback(inRefCon:UnsafeMutableRawPointer,
                           &bufs)
     if err == noErr
     {
-        var array = [UInt16]();
-        let data=bufs.mBuffers.mData!.assumingMemoryBound(to: UInt16.self)
-        array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames)));
-        AudioCatcher.sharedInstance.soundArray=array
+        var array = [Int8]()
+        let data=bufs.mBuffers.mData!.assumingMemoryBound(to: Int8.self)
+        array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames*2)));
+        graphView.array = array;
     }
     
     return err!
