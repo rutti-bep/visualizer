@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window!.center()
         window!.isMovableByWindowBackground = true
         window!.backgroundColor = NSColor.clear
-        //window!.level = Int(CGWindowLevelForKey(.desktopWindow))
+        window!.level = Int(CGWindowLevelForKey(.desktopWindow))
         window!.collectionBehavior = NSWindowCollectionBehavior.canJoinAllSpaces
         window!.makeKeyAndOrderFront(nil)
 
