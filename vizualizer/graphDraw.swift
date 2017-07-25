@@ -10,52 +10,61 @@ import Foundation
 import AppKit
 import Cocoa
 
+var settingController = SettingController.sharedInstance;
+var settingModel = SettingModel.sharedInstance;
+
 final class Graph: NSView{
     static let sharedInstance = Graph();
-    var lineWidth:Float = 3.0
-    var lineColor:CGColor = CGColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
-    var circleWidth:Float = 1.0
-    var circleColor:CGColor = CGColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
-    var array = [Int8]();
+    var spaceLimit:Int = 3;
+    var array = [Int8]() {
+        didSet{
+            self._array = self.reduce(changeLimit: spaceLimit,newArray: self.array)
+        }
+    }
+    private var _array = [Int8]()
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-        self.reduce(4);
+        //self.reduce(3);
         
-        NSColor.init(red: 0.972549019607843, green: 0.709803921568627, blue: 0.031372549019608, alpha: 1).set();
+        settingModel.lineColor.set();
         let path = NSBezierPath()
-        path.move(to: NSPoint(x:self.frame.minX,y:self.frame.minY))
+       // path.move(to: NSPoint(x:self.frame.minX,y:self.frame.minY))
         
-        let widthSpace = self.frame.width/CGFloat(array.count);
-        for i in 0..<array.count {
+        let widthSpace = self.frame.width/CGFloat(_array.count);
+        for i in 0..<_array.count {
             //Swift.print(abs(array[i]))
             //let absArray = array[i] >= 0 ? array[i] : abs(array[i]+1);
-            let height = CGFloat(array[i])/127.0*self.frame.height;
-            let width = widthSpace*CGFloat(i+1);
+            let height = CGFloat(_array[i])/127.0 * self.frame.height * settingModel.heightParsent;
+            let width = widthSpace*CGFloat(i);
             let point = NSPoint(x:width,y:height)
-            path.line(to: point)
+            if(i == 0){
+                path.move(to: point)
+            }else{
+                path.line(to: point)
+            }
        //     Swift.print(height)
        //     Swift.print(point)
         }
         path.stroke()
     }
     
-    private func reduce(_ changeLimit:Int?=1){
+    private func reduce(changeLimit:Int?=1,newArray:[Int8]) -> [Int8]{
         var change = 0;
         var reserve:Int8 = 0;
-        var newArray = [Int8]()
-        for i in 0..<array.count/3 {
-            let absArray = array[i] >= 0 ? array[i] : abs(array[i]+1);
+        var reduceArray = [Int8]()
+        for i in 0..<array.count {
+            let absArray = newArray[i] >= 0 ? newArray[i] : abs(newArray[i]+1);
             if(reserve < absArray){
                 reserve = absArray
             }
             change += 1;
             if(change >= changeLimit!){
-                newArray.append(reserve)
+                reduceArray.append(reserve)
                 reserve = 0;
                 change = 0;
             }
         }
-        array = newArray;
+        return reduceArray;
     }
 }
