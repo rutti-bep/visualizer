@@ -96,7 +96,7 @@ class Label: NSTextField {
         }
         
         set {
-          self.stringValue = newValue
+            self.stringValue = newValue
         }
     }
     

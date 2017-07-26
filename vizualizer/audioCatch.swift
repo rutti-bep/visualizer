@@ -17,6 +17,8 @@ let kInputBus: UInt32 = 1;
 
 let graphView = Graph.sharedInstance;
 
+var count = 0;
+
 class AudioCatcher{
     var audioUnit:AudioUnit? = nil;
     static let sharedInstance = AudioCatcher();
@@ -201,7 +203,7 @@ func renderCallback(inRefCon:UnsafeMutableRawPointer,
     
     let buffer = allocateAudioBuffer(numChannel: 2, size: inNumberFrames)
     var bufs = AudioBufferList.init(mNumberBuffers: 1, mBuffers: buffer)
-   
+    
     err = AudioUnitRender(AudioCatcher.sharedInstance.audioUnit!,
                           ioActionFlags,
                           inTimeStamp,
@@ -213,11 +215,20 @@ func renderCallback(inRefCon:UnsafeMutableRawPointer,
         var array = [Int8]()
         let data=bufs.mBuffers.mData!.assumingMemoryBound(to: Int8.self)
         array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames*2)));
-        graphView.array = array;
+        
+        count += 1;
+        if(count >= 3){
+            graphView.array = array;
+            DispatchQueue.mainSyncSafe() {
+                graphView.setNeedsDisplay(graphView.frame)
+                //    print("call")
+            }
+            count = 0;
+        }
     }
     
     return err!
-   
+    
 }
 
 func allocateAudioBuffer(numChannel: UInt32, size: UInt32) -> AudioBuffer {

@@ -15,7 +15,7 @@ var settingModel = SettingModel.sharedInstance;
 
 final class Graph: NSView{
     static let sharedInstance = Graph();
-    var spaceLimit:Int = 3;
+    var spaceLimit:Int = 5;
     var array = [Int8]() {
         didSet{
             self._array = self.reduce(changeLimit: spaceLimit,newArray: self.array)
@@ -25,16 +25,13 @@ final class Graph: NSView{
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-        //self.reduce(3);
         
         settingModel.lineColor.set();
         let path = NSBezierPath()
-       // path.move(to: NSPoint(x:self.frame.minX,y:self.frame.minY))
+        path.lineWidth = 1.5;
         
         let widthSpace = self.frame.width/CGFloat(_array.count);
         for i in 0..<_array.count {
-            //Swift.print(abs(array[i]))
-            //let absArray = array[i] >= 0 ? array[i] : abs(array[i]+1);
             let height = CGFloat(_array[i])/127.0 * self.frame.height * settingModel.heightParsent;
             let width = widthSpace*CGFloat(i);
             let point = NSPoint(x:width,y:height)
@@ -43,8 +40,6 @@ final class Graph: NSView{
             }else{
                 path.line(to: point)
             }
-       //     Swift.print(height)
-       //     Swift.print(point)
         }
         path.stroke()
     }
