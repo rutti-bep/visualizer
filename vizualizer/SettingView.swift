@@ -20,9 +20,9 @@ class SettingView:NSView {
         heightChangeSlider.action = #selector(heightChange);
         heightChangeSlider.floatValue = 0.5
         self.addSubview(heightChangeSlider)
-        backgroundColorSelector.setup(target:self,selector:#selector(backgroundColorChange));
+        backgroundColorSelector.setup(target:self,action:#selector(backgroundColorChange),title:"--background--");
         self.addSubview(backgroundColorSelector)
-        lineColorSelector.setup(target:self,selector:#selector(lineColorChange));
+        lineColorSelector.setup(target:self,action:#selector(lineColorChange),title:"--line--");
         lineColorSelector.layer?.backgroundColor = NSColor.red.cgColor
         self.addSubview(lineColorSelector)
     }
@@ -42,12 +42,10 @@ class SettingView:NSView {
     }
     
     func backgroundColorChange(){
-        backgroundColorSelector.ColorValueChange();
         Graph.sharedInstance.layer?.backgroundColor = backgroundColorSelector.Color.cgColor;
     }
     
     func lineColorChange(){
-        lineColorSelector.ColorValueChange();
         settingModel.lineColor = lineColorSelector.Color;
     }
     
