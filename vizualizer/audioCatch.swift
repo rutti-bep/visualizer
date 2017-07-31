@@ -212,10 +212,9 @@ func renderCallback(inRefCon:UnsafeMutableRawPointer,
                           &bufs)
     if err == noErr
     {
-        var array = [Int8]()
-        let data=bufs.mBuffers.mData!.assumingMemoryBound(to: Int8.self)
-        array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames*2)));
-        
+        var array = [Int16]()
+        let data=bufs.mBuffers.mData!.assumingMemoryBound(to: Int16.self)
+        array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames)));
         count += 1;
         if(count >= 3){
             graphView.array = array;
