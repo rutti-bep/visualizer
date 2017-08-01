@@ -39,10 +39,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         graphView.wantsLayer = true
         window!.contentView?.addSubview(graphView);
         
-        try! print(getInputDevices());
+        try! print(getAudioDevices());
         audioCatcher.initialize();
         audioCatcher.start();
-        
         
         settingWindow = NSWindow(contentRect:NSRect(x:0,y:0,width:500,height:500), styleMask: [.titled,.closable], backing: NSBackingStoreType.buffered, defer:true)
         settingWindow!.title = "vizualizer settings"

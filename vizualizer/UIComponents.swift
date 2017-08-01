@@ -24,7 +24,7 @@ class ColorSelector:NSView{
     var alphaSlider = NSSlider()
     var Color = NSColor.clear;
     
-    func setup(target:AnyObject,action:Selector,title:String?=""){
+    func setup(target:AnyObject,action:Selector,title:String=""){
         self.title.setup(defaultText: title,alignment: NSTextAlignment.left);
         self.addSubview(self.title);
         self.colorSampleView.setup();
@@ -100,10 +100,10 @@ class Label: NSTextField {
         }
     }
     
-    func setup(defaultText:String?="",alignment:NSTextAlignment?=NSTextAlignment.center){
-        self.stringValue = defaultText!;
+    func setup(defaultText:String="",alignment:NSTextAlignment=NSTextAlignment.center){
+        self.stringValue = defaultText;
         self.allowsEditingTextAttributes = false;
-        self.alignment = alignment!;
+        self.alignment = alignment;
         self.drawsBackground = false;
         self.isBordered = false;
         self.isEditable = false;

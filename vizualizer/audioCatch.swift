@@ -21,6 +21,7 @@ var count = 0;
 
 class AudioCatcher{
     var audioUnit:AudioUnit? = nil;
+    var defaultAudioDeviceId:AudioDeviceID?;
     static let sharedInstance = AudioCatcher();
     
     private func setUpAudioHAL() -> OSStatus{
@@ -66,13 +67,19 @@ class AudioCatcher{
         // 入力デバイスを設定
         
         var inputDeviceId = AudioDeviceID(0)
-        var address =  AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
-                                                  mScope: kAudioObjectPropertyScopeGlobal,
-                                                  mElement: kAudioObjectPropertyElementMaster)
+        var err = noErr;
         var size = UInt32(MemoryLayout<AudioDeviceID>.size)
         
-        var err = AudioObjectGetPropertyData(UInt32(kAudioObjectSystemObject), &address, 0, nil, &size, &inputDeviceId)
-        // デフォルトの入力デバイスを取得
+        if(defaultAudioDeviceId == nil){
+            var address =  AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
+                                                  mScope: kAudioObjectPropertyScopeGlobal,
+                                                  mElement: kAudioObjectPropertyElementMaster)
+        
+            err = AudioObjectGetPropertyData(UInt32(kAudioObjectSystemObject), &address, 0, nil, &size, &inputDeviceId)
+            // デフォルトの入力デバイスを取得
+        }else{
+            inputDeviceId = defaultAudioDeviceId!;
+        }
         
         if err == noErr
         {
@@ -244,40 +251,11 @@ func performRender(ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlag
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-func handle(_ errorCode: OSStatus) throws {
-    if errorCode != kAudioHardwareNoError {
-        let error = NSError(domain: NSOSStatusErrorDomain, code: Int(errorCode), userInfo: [NSLocalizedDescriptionKey : "CAError: \(errorCode)" ])
-        throw error
-    }
-}
-
-func getInputDevices() throws -> [AudioDeviceID] {
+//catch Audiodevices
+func getAudioDevices() throws -> Dictionary<String,UInt32>{
     
-    var inputDevices: [AudioDeviceID] = []
+//    var audioDevices: [AudioDeviceID] = []
+    var audioDevicesDictionary = Dictionary<String,UInt32>();
     
     // Construct the address of the property which holds all available devices
     var devicesPropertyAddress = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDevices, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMaster)
@@ -288,6 +266,8 @@ func getInputDevices() throws -> [AudioDeviceID] {
     
     // Get the number of devices by dividing the property address by the size of AudioDeviceIDs
     let numberOfDevices = Int(propertySize) / MemoryLayout<AudioDeviceID>.size
+    
+   // Swift.print(numberOfDevices)
     
     // Create space to store the values
     var deviceIDs: [AudioDeviceID] = []
@@ -310,14 +290,14 @@ func getInputDevices() throws -> [AudioDeviceID] {
         // Check the input scope of the device for any channels. That would mean it's an input device
         
         // Get the stream configuration of the device. It's a list of audio buffers.
-        var streamConfigAddress = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreamConfiguration, mScope: kAudioDevicePropertyScopeInput, mElement: 0)
+        var InputStreamConfigAddress = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreamConfiguration, mScope: kAudioDevicePropertyScopeInput, mElement: 0)
         
         // Get the size so we can make room again
-        try handle(AudioObjectGetPropertyDataSize(id, &streamConfigAddress, 0, nil, &propertySize))
+        try handle(AudioObjectGetPropertyDataSize(id, &InputStreamConfigAddress, 0, nil, &propertySize))
         
         // Create a buffer list with the property size we just got and let core audio fill it
         let audioBufferList = AudioBufferList.allocate(maximumBuffers: Int(propertySize))
-        try handle(AudioObjectGetPropertyData(id, &streamConfigAddress, 0, nil, &propertySize, audioBufferList.unsafeMutablePointer))
+        try handle(AudioObjectGetPropertyData(id, &InputStreamConfigAddress, 0, nil, &propertySize, audioBufferList.unsafeMutablePointer))
         
         // Get the number of channels in all the audio buffers in the audio buffer list
         var channelCount = 0
@@ -329,13 +309,62 @@ func getInputDevices() throws -> [AudioDeviceID] {
         
         // If there are channels, it's an input device
         if channelCount > 0 {
-            Swift.print("Found input device '\(name)' with \(channelCount) channels id:\(id)")
-            inputDevices.append(id)
+            Swift.print("Found Input device '\(name)' with \(channelCount) channels id:\(id)")
+        //    audioDevices.append(id)
+            audioDevicesDictionary[name as String] = id
         }
+        
     }
     
-    return inputDevices
+    // Iterate
+    for id in deviceIDs {
+        
+        // Get the device name for fun
+        var name: CFString = "" as CFString
+        var propertySize = UInt32(MemoryLayout<CFString>.size)
+        var deviceNamePropertyAddress = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyDeviceNameCFString, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMaster)
+        try handle(AudioObjectGetPropertyData(id, &deviceNamePropertyAddress, 0, nil, &propertySize, &name))
+        
+        // Check the input scope of the device for any channels. That would mean it's an input device
+        
+        // Get the stream configuration of the device. It's a list of audio buffers.
+        var InputStreamConfigAddress = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreamConfiguration, mScope: kAudioDevicePropertyScopeOutput, mElement: 0)
+        
+        // Get the size so we can make room again
+        try handle(AudioObjectGetPropertyDataSize(id, &InputStreamConfigAddress, 0, nil, &propertySize))
+        
+        // Create a buffer list with the property size we just got and let core audio fill it
+        let audioBufferList = AudioBufferList.allocate(maximumBuffers: Int(propertySize))
+        try handle(AudioObjectGetPropertyData(id, &InputStreamConfigAddress, 0, nil, &propertySize, audioBufferList.unsafeMutablePointer))
+        
+        // Get the number of channels in all the audio buffers in the audio buffer list
+        var channelCount = 0
+        for i in 0 ..< Int(audioBufferList.unsafeMutablePointer.pointee.mNumberBuffers) {
+            channelCount = channelCount + Int(audioBufferList[i].mNumberChannels)
+        }
+        
+        free(audioBufferList.unsafeMutablePointer)
+        
+        // If there are channels, it's an input device
+        if channelCount > 0 {
+            Swift.print("Found Output device '\(name)' with \(channelCount) channels id:\(id) adress:\(deviceNamePropertyAddress)")
+            //    audioDevices.append(id)
+            audioDevicesDictionary[name as String] = id
+        }
+        
+    }
+    
+    return audioDevicesDictionary
 }
+
+
+func handle(_ errorCode: OSStatus) throws {
+    if errorCode != kAudioHardwareNoError {
+        let error = NSError(domain: NSOSStatusErrorDomain, code: Int(errorCode), userInfo: [NSLocalizedDescriptionKey : "CAError: \(errorCode)" ])
+        throw error
+    }
+}
+
 
 
 
