@@ -53,6 +53,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         settingView.resize();
         settingWindow?.contentView = settingView
         
+        
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
