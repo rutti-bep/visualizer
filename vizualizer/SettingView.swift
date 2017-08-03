@@ -13,6 +13,7 @@ class SettingView:NSView {
     static let sharedInstance = SettingView();
     var audioUnitSelector = NSPopUpButton();
     var graphModeSelector = NSPopUpButton();
+    var screenChangeButton = NSButton();
     var backgroundColorSelector = ColorSelector();
     var lineColorSelector = ColorSelector();
     var heightChangeSlider = NSSlider()
@@ -36,6 +37,11 @@ class SettingView:NSView {
         graphModeSelector.action = #selector(SettingController.sharedInstance.selectedGraphMode)
         self.addSubview(graphModeSelector)
         
+        screenChangeButton.title = "screenChange"
+        screenChangeButton.target = AppDelegate();
+        screenChangeButton.action = #selector(AppDelegate.changeScreen)
+        self.addSubview(screenChangeButton);
+        
         backgroundColorSelector.setup(target:self,action:#selector(backgroundColorChange),title:"--background--");
         self.addSubview(backgroundColorSelector)
         lineColorSelector.setup(target:self,action:#selector(lineColorChange),title:"--line--");
@@ -50,8 +56,9 @@ class SettingView:NSView {
     
     func resize(){
         let frame = self.frame;
-        audioUnitSelector.frame = NSRect(x:0,y:frame.height/4*3,width:frame.width/2,height:frame.height/8)
-        graphModeSelector.frame = NSRect(x:frame.width/2,y:frame.height/4*3,width:frame.width/4,height:frame.height/8)
+        audioUnitSelector.frame = NSRect(x:frame.width/2,y:frame.height/8*7+10,width:frame.width/2,height:20)
+        graphModeSelector.frame = NSRect(x:frame.width/4,y:frame.height/4*3+15,width:frame.width/4,height:20)
+        screenChangeButton.frame = NSRect(x:frame.width/4*3,y:frame.height/4*3+15,width:frame.width/4,height:20)
         backgroundColorSelector.frame = NSRect(x:0,y:frame.height/4,width:frame.width,height:frame.height/4)
         backgroundColorSelector.resize();
         lineColorSelector.frame = NSRect(x:0,y:frame.height/2,width:frame.width,height:frame.height/4)

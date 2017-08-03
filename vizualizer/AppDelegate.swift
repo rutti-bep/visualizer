@@ -17,11 +17,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var window:NSWindow?;
     var settingWindow:NSWindow?;
     
+    var screenCounter = 0;
+    
     var graphView = Graph.sharedInstance;
     let audioCatcher = AudioCatcher.sharedInstance;
     var settingController = SettingController.sharedInstance;
     var settingModel = SettingModel.sharedInstance;
     var settingView = SettingView.sharedInstance;
+    
+    func changeScreen(){
+        screenCounter += 1;
+        let screensCount = (NSScreen.screens()?.count)!;
+        if screenCounter >= screensCount {
+            screenCounter = 0;
+        }
+        Swift.print(screenCounter)
+        let screen = NSScreen.screens()?[screenCounter]
+        let point = NSPoint(x: screen!.frame.minX, y: screen!.frame.minY)
+        let size = NSSize(width: screen!.frame.size.width, height: screen!.frame.size.height)
+        window!.setFrameOrigin(point)
+        window!.setContentSize(size);
+        window!.makeKeyAndOrderFront(nil)
+        
+        graphView.frame.size = size;
+    }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -39,10 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         graphView.wantsLayer = true
         window!.contentView?.addSubview(graphView);
         
-        //try! print(getAudioDevices());
         audioCatcher.initialize();
-       // audioCatcher.start();
-        //audioCatcher.end();
         
         settingWindow = NSWindow(contentRect:NSRect(x:0,y:0,width:500,height:500), styleMask: [.titled,.closable], backing: NSBackingStoreType.buffered, defer:true)
         settingWindow!.title = "vizualizer settings"
@@ -53,7 +69,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         settingView.resize();
         settingWindow?.contentView = settingView
         
-        
+        //Swift.print(NSScreen.screens())
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {

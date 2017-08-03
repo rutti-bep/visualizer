@@ -25,8 +25,6 @@ final class Graph: NSView{
     var array = [Int16]();
     var mode:GraphMode = .normal;
     
-
-    
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         
