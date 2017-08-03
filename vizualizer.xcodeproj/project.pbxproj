@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		592DF5D71F26FD990014695A /* UIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592DF5D61F26FD990014695A /* UIComponents.swift */; };
+		595AE3FE1F33467F0006B4DE /* extensionEnumEnumerable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AE3FD1F33467F0006B4DE /* extensionEnumEnumerable.swift */; };
 		596AD4AB1F1A2D2B00767757 /* audioCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596AD4AA1F1A2D2B00767757 /* audioCatch.swift */; };
 		596AD4AE1F1A2EEE00767757 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596AD4AD1F1A2EEE00767757 /* CoreAudio.framework */; };
 		596AD4B21F1B049500767757 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596AD4B11F1B049500767757 /* AVFoundation.framework */; };
@@ -27,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		592DF5D61F26FD990014695A /* UIComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
+		595AE3FD1F33467F0006B4DE /* extensionEnumEnumerable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = extensionEnumEnumerable.swift; sourceTree = "<group>"; };
 		596AD4AA1F1A2D2B00767757 /* audioCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = audioCatch.swift; sourceTree = "<group>"; };
 		596AD4AD1F1A2EEE00767757 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		596AD4B11F1B049500767757 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -99,10 +101,11 @@
 				596AD4AA1F1A2D2B00767757 /* audioCatch.swift */,
 				599663C81F2614FD000917CE /* graphDraw.swift */,
 				599663CA1F26BB07000917CE /* SettingController.swift */,
-				599663CC1F26E5D2000917CE /* SettingModel.swift */,
 				599663CE1F26E5E6000917CE /* SettingView.swift */,
+				599663CC1F26E5D2000917CE /* SettingModel.swift */,
 				592DF5D61F26FD990014695A /* UIComponents.swift */,
 				59919CBB1F2918D2004710C0 /* extensionDispatchQueue.swift */,
+				595AE3FD1F33467F0006B4DE /* extensionEnumEnumerable.swift */,
 				59D806E91EFBEEA8006828E6 /* Assets.xcassets */,
 				59D806EB1EFBEEA8006828E6 /* Main.storyboard */,
 				59D806EE1EFBEEA8006828E6 /* Info.plist */,
@@ -187,6 +190,7 @@
 				59919CBC1F2918D2004710C0 /* extensionDispatchQueue.swift in Sources */,
 				592DF5D71F26FD990014695A /* UIComponents.swift in Sources */,
 				59D806E61EFBEEA8006828E6 /* AppDelegate.swift in Sources */,
+				595AE3FE1F33467F0006B4DE /* extensionEnumEnumerable.swift in Sources */,
 				599663CD1F26E5D2000917CE /* SettingModel.swift in Sources */,
 				599663CF1F26E5E6000917CE /* SettingView.swift in Sources */,
 				599663C91F2614FD000917CE /* graphDraw.swift in Sources */,

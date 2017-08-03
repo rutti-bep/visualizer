@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var settingWindow:NSWindow?;
     
     var graphView = Graph.sharedInstance;
-    var audioCatcher = AudioCatcher.sharedInstance;
+    let audioCatcher = AudioCatcher.sharedInstance;
     var settingController = SettingController.sharedInstance;
     var settingModel = SettingModel.sharedInstance;
     var settingView = SettingView.sharedInstance;
@@ -39,9 +39,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         graphView.wantsLayer = true
         window!.contentView?.addSubview(graphView);
         
-        try! print(getAudioDevices());
+        //try! print(getAudioDevices());
         audioCatcher.initialize();
-        audioCatcher.start();
+       // audioCatcher.start();
+        //audioCatcher.end();
         
         settingWindow = NSWindow(contentRect:NSRect(x:0,y:0,width:500,height:500), styleMask: [.titled,.closable], backing: NSBackingStoreType.buffered, defer:true)
         settingWindow!.title = "vizualizer settings"

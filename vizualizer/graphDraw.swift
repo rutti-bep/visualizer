@@ -13,17 +13,19 @@ import Cocoa
 var settingController = SettingController.sharedInstance;
 var settingModel = SettingModel.sharedInstance;
 
+enum GraphMode :String, EnumEnumerable{
+    case normal = "normal"
+    case absolute = "absolute"
+}
+
+
 final class Graph: NSView{
     static let sharedInstance = Graph();
     var spaceLimit:Int = 5;
     var array = [Int16]();
-    var mode:Mode = .normal;
+    var mode:GraphMode = .normal;
     
-    enum Mode:Int {
-        case normal = 0
-        case absolute = 1
-    }
-    
+
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)

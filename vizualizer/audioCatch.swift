@@ -71,10 +71,10 @@ class AudioCatcher{
         var size = UInt32(MemoryLayout<AudioDeviceID>.size)
         
         if(defaultAudioDeviceId == nil){
-            var address =  AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
-                                                  mScope: kAudioObjectPropertyScopeGlobal,
-                                                  mElement: kAudioObjectPropertyElementMaster)
-        
+            var address =  AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultInputDevice,
+                                                      mScope: kAudioObjectPropertyScopeGlobal,
+                                                      mElement: kAudioObjectPropertyElementMaster)
+            
             err = AudioObjectGetPropertyData(UInt32(kAudioObjectSystemObject), &address, 0, nil, &size, &inputDeviceId)
             // デフォルトの入力デバイスを取得
         }else{
@@ -88,8 +88,8 @@ class AudioCatcher{
         }
         
         // 確認用
-        print("DeviceName:",inputDeviceId)
-        print("BufferSize:",self.bufferSize(inputDeviceId))
+        Swift.print("DeviceName:",inputDeviceId)
+        Swift.print("BufferSize:",self.bufferSize(inputDeviceId))
         
         return err
     }
@@ -138,7 +138,7 @@ class AudioCatcher{
     
     
     func initialize() {
-        
+        self.audioUnit = nil;
         if self.setUpAudioHAL() != noErr
         {
             exit(-1)
@@ -170,25 +170,26 @@ class AudioCatcher{
             exit(-1)
         }
         
-        print("audio init!!")
+        Swift.print("audio init!!")
+        Swift.print(self.audioUnit!)
     }
     
     func start() {
-        if(( audioUnit ) == nil) {
+        if self.audioUnit  == nil {
             return;
         }
-        NSLog("start");
+        Swift.print("start");
         AudioOutputUnitStart( audioUnit! );
     }
     
     func end() {
-        if(( audioUnit ) == nil) {
+        if self.audioUnit == nil {
+            //     Swift.print("nilll")
             return;
         }
-        NSLog("end");
-        AudioOutputUnitStop( audioUnit! );
+        Swift.print("end");
+        AudioOutputUnitStop( self.audioUnit! );
     }
-    
 }
 
 @objc protocol AURenderCallbackDelegate {
@@ -206,34 +207,37 @@ func renderCallback(inRefCon:UnsafeMutableRawPointer,
                     inBufNumber:UInt32,
                     inNumberFrames:UInt32,
                     ioData:UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-    var err :OSStatus? = nil
+    var err :OSStatus = noErr
     
     let buffer = allocateAudioBuffer(numChannel: 2, size: inNumberFrames)
     var bufs = AudioBufferList.init(mNumberBuffers: 1, mBuffers: buffer)
     
-    err = AudioUnitRender(AudioCatcher.sharedInstance.audioUnit!,
-                          ioActionFlags,
-                          inTimeStamp,
-                          inBufNumber,
-                          inNumberFrames,
-                          &bufs)
-    if err == noErr
-    {
-        var array = [Int16]()
-        let data=bufs.mBuffers.mData!.assumingMemoryBound(to: Int16.self)
-        array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames)));
-        count += 1;
-        if(count >= 3){
-            graphView.array = array;
-            DispatchQueue.mainSyncSafe() {
-                graphView.setNeedsDisplay(graphView.frame)
-                //    print("call")
+    let audioUnit = AudioCatcher.sharedInstance.audioUnit;
+    if(AudioCatcher.sharedInstance.audioUnit != nil){
+        err = AudioUnitRender(AudioCatcher.sharedInstance.audioUnit!,
+                              ioActionFlags,
+                              inTimeStamp,
+                              inBufNumber,
+                              inNumberFrames,
+                              &bufs)
+        
+        if err == noErr
+        {
+            var array = [Int16]()
+            let data=bufs.mBuffers.mData!.assumingMemoryBound(to: Int16.self)
+            array.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(inNumberFrames)));
+            count += 1;
+            if(count >= 3){
+                graphView.array = array;
+                DispatchQueue.mainSyncSafe() {
+                    graphView.setNeedsDisplay(graphView.frame)
+                    //    Swift.print("call")
+                }
+                count = 0;
             }
-            count = 0;
         }
     }
-    
-    return err!
+    return err
     
 }
 
@@ -246,7 +250,7 @@ func allocateAudioBuffer(numChannel: UInt32, size: UInt32) -> AudioBuffer {
 }
 
 func performRender(ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>, inTimeStamp: UnsafePointer<AudioTimeStamp>, inBusNumber: UInt32, inNumberFrames: UInt32, ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
-    print("Hello there!")
+    Swift.print("Hello there!")
     return noErr
 }
 
@@ -254,7 +258,7 @@ func performRender(ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlag
 //catch Audiodevices
 func getAudioDevices() throws -> Dictionary<String,UInt32>{
     
-//    var audioDevices: [AudioDeviceID] = []
+    //    var audioDevices: [AudioDeviceID] = []
     var audioDevicesDictionary = Dictionary<String,UInt32>();
     
     // Construct the address of the property which holds all available devices
@@ -267,7 +271,7 @@ func getAudioDevices() throws -> Dictionary<String,UInt32>{
     // Get the number of devices by dividing the property address by the size of AudioDeviceIDs
     let numberOfDevices = Int(propertySize) / MemoryLayout<AudioDeviceID>.size
     
-   // Swift.print(numberOfDevices)
+    // Swift.print(numberOfDevices)
     
     // Create space to store the values
     var deviceIDs: [AudioDeviceID] = []
@@ -310,49 +314,13 @@ func getAudioDevices() throws -> Dictionary<String,UInt32>{
         // If there are channels, it's an input device
         if channelCount > 0 {
             Swift.print("Found Input device '\(name)' with \(channelCount) channels id:\(id)")
-        //    audioDevices.append(id)
-            audioDevicesDictionary[name as String] = id
-        }
-        
-    }
-    
-    // Iterate
-    for id in deviceIDs {
-        
-        // Get the device name for fun
-        var name: CFString = "" as CFString
-        var propertySize = UInt32(MemoryLayout<CFString>.size)
-        var deviceNamePropertyAddress = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyDeviceNameCFString, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMaster)
-        try handle(AudioObjectGetPropertyData(id, &deviceNamePropertyAddress, 0, nil, &propertySize, &name))
-        
-        // Check the input scope of the device for any channels. That would mean it's an input device
-        
-        // Get the stream configuration of the device. It's a list of audio buffers.
-        var InputStreamConfigAddress = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreamConfiguration, mScope: kAudioDevicePropertyScopeOutput, mElement: 0)
-        
-        // Get the size so we can make room again
-        try handle(AudioObjectGetPropertyDataSize(id, &InputStreamConfigAddress, 0, nil, &propertySize))
-        
-        // Create a buffer list with the property size we just got and let core audio fill it
-        let audioBufferList = AudioBufferList.allocate(maximumBuffers: Int(propertySize))
-        try handle(AudioObjectGetPropertyData(id, &InputStreamConfigAddress, 0, nil, &propertySize, audioBufferList.unsafeMutablePointer))
-        
-        // Get the number of channels in all the audio buffers in the audio buffer list
-        var channelCount = 0
-        for i in 0 ..< Int(audioBufferList.unsafeMutablePointer.pointee.mNumberBuffers) {
-            channelCount = channelCount + Int(audioBufferList[i].mNumberChannels)
-        }
-        
-        free(audioBufferList.unsafeMutablePointer)
-        
-        // If there are channels, it's an input device
-        if channelCount > 0 {
-            Swift.print("Found Output device '\(name)' with \(channelCount) channels id:\(id) adress:\(deviceNamePropertyAddress)")
             //    audioDevices.append(id)
             audioDevicesDictionary[name as String] = id
         }
         
     }
+    
+    
     
     return audioDevicesDictionary
 }
